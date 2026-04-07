@@ -744,12 +744,13 @@ function prev(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// Checkbox styling
+// Checkbox styling — label toggles natively, we just sync the class
 document.querySelectorAll('.check-item').forEach(item => {
   const cb = item.querySelector('input');
-  item.addEventListener('click', e => {
-    if(e.target.tagName !== 'INPUT') cb.checked = !cb.checked;
+  cb.addEventListener('change', () => {
     item.classList.toggle('selected', cb.checked);
+    const grid = item.closest('.check-grid');
+    if(grid) grid.classList.remove('invalid');
   });
 });
 
