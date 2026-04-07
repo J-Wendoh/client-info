@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Website Project Brief</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a2e;--cream:#faf8f4;--accent:#c8a96e;--accent-light:#f0e6d3;
+  --muted:#6b6880;--border:#e2ddd6;--white:#fff;--success:#3d8b6e;
+  --bg:#faf8f4;--surface:#ffffff;--text:#1a1a2e;--header-bg:#1a1a2e;--header-text:#ffffff;
+  --shadow:0 10px 40px -10px rgba(26,26,46,.15);
+}
+[data-theme="dark"]{
+  --bg:#0e0e1a;--surface:#1a1a2e;--text:#f0ece4;--header-bg:#070711;--header-text:#f0ece4;
+  --border:#2d2d44;--muted:#9893ad;--accent-light:#2a2438;--cream:#0e0e1a;--white:#1a1a2e;
+  --shadow:0 10px 40px -10px rgba(0,0,0,.5);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;transition:background .5s ease,color .5s ease;min-height:100vh}
+
+/* Header */
+header{background:var(--header-bg);color:var(--header-text);padding:70px 40px 60px;text-align:center;position:relative;overflow:hidden;transition:background .5s ease}
+header::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at center,rgba(200,169,110,.08) 0%,transparent 60%);animation:drift 20s ease-in-out infinite}
+@keyframes drift{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(30px,-20px) rotate(180deg)}}
+header > *{position:relative;z-index:1}
+.badge{display:inline-block;background:var(--accent);color:#1a1a2e;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:7px 20px;border-radius:30px;margin-bottom:22px;animation:fadeDown .8s ease both}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(30px,5vw,50px);font-weight:700;margin-bottom:14px;animation:fadeDown .8s ease .1s both}
+header p{color:rgba(240,236,228,.7);font-size:15px;max-width:520px;margin:0 auto;animation:fadeDown .8s ease .2s both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-15px)}to{opacity:1;transform:translateY(0)}}
+
+/* Theme toggle */
+.theme-toggle{position:absolute;top:24px;right:24px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--header-text);width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .3s ease;z-index:2}
+.theme-toggle:hover{background:var(--accent);color:#1a1a2e;transform:rotate(20deg) scale(1.1)}
+
+/* Progress */
+.progress-bar-wrap{background:var(--header-bg);padding:0 40px 36px;display:flex;justify-content:center;transition:background .5s ease}
+.steps{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.step-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(240,236,228,.55);font-size:12px;font-weight:500;padding:8px 16px;border-radius:24px;transition:all .4s cubic-bezier(.4,0,.2,1)}
+.step-pill .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);font-size:11px;font-weight:600;transition:all .4s ease}
+.step-pill.active{background:var(--accent);border-color:var(--accent);color:#1a1a2e;transform:translateY(-2px);box-shadow:0 8px 20px -8px rgba(200,169,110,.6)}
+.step-pill.active .num{background:#1a1a2e;color:var(--accent)}
+.step-pill.done{color:var(--accent);border-color:rgba(200,169,110,.4)}
+
+/* Form */
+.form-wrap{max-width:780px;margin:-30px auto 0;padding:0 20px 80px;position:relative;z-index:2}
+.form-card{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:50px 45px;border:1px solid var(--border);transition:all .5s ease;animation:cardRise .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes cardRise{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.section{display:none}
+.section.active{display:block;animation:fadeUp .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section h2{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:6px;color:var(--text)}
+.section .sub{color:var(--muted);font-size:14px;margin-bottom:30px}
+
+.field-group{margin-bottom:24px;animation:slideIn .5s ease both}
+.field-group:nth-child(2){animation-delay:.05s}
+.field-group:nth-child(3){animation-delay:.1s}
+.field-group:nth-child(4){animation-delay:.15s}
+.field-group:nth-child(5){animation-delay:.2s}
+.field-group:nth-child(6){animation-delay:.25s}
+@keyframes slideIn{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+
+label{display:block;font-weight:600;font-size:13px;margin-bottom:8px;color:var(--text);letter-spacing:.2px}
+.req{color:var(--accent);margin-left:2px}
+input,select,textarea{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:11px;outline:none;font-family:inherit;font-size:14px;background:var(--bg);color:var(--text);transition:all .3s ease}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(200,169,110,.12);transform:translateY(-1px)}
+input.error,select.error,textarea.error{border-color:#d4574a;box-shadow:0 0 0 4px rgba(212,87,74,.1);animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+textarea{resize:vertical;min-height:110px}
+.err-msg{color:#d4574a;font-size:12px;margin-top:6px;display:none}
+.err-msg.show{display:block;animation:fadeUp .3s ease}
+
+.check-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.check-item{display:flex;align-items:center;gap:10px;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:13px 14px;cursor:pointer;font-size:13px;font-weight:500;transition:all .3s cubic-bezier(.2,.8,.2,1)}
+.check-item:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 16px -8px rgba(200,169,110,.4)}
+.check-item.selected{border-color:var(--accent);background:var(--accent-light);color:var(--text)}
+.check-item input{display:none}
+.check-item .dot{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border);flex-shrink:0;transition:all .3s ease;position:relative}
+.check-item.selected .dot{border-color:var(--accent);background:var(--accent)}
+.check-item.selected .dot::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#1a1a2e;font-size:11px;font-weight:700}
+
+/* Buttons */
+.nav-buttons{display:flex;justify-content:space-between;margin-top:36px;gap:12px}
+.btn{padding:14px 32px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px;border:none;font-family:inherit;transition:all .3s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.btn::before{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .5s,height .5s}
+.btn:hover::before{width:300px;height:300px}
+.btn-next{background:var(--text);color:var(--surface);margin-left:auto}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 12px 24px -10px rgba(0,0,0,.3)}
+.btn-back{background:transparent;color:var(--muted);border:1.5px solid var(--border)}
+.btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.btn-submit{background:var(--accent);color:#1a1a2e;margin-left:auto}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 12px 28px -10px rgba(200,169,110,.6)}
+
+/* Success */
+#success-screen{display:none;text-align:center;padding:80px 20px;animation:fadeUp .6s ease both}
+#success-screen .icon{font-size:64px;margin-bottom:20px;display:inline-block;animation:pop .6s cubic-bezier(.2,1.4,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.3) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+#success-screen h2{font-family:'Playfair Display',serif;font-size:32px;margin-bottom:14px;color:var(--text)}
+#success-screen p{color:var(--muted);max-width:420px;margin:0 auto}
+
+/* Overlay */
+.submitting-overlay{display:none;position:fixed;inset:0;background:rgba(14,14,26,.85);backdrop-filter:blur(8px);z-index:999;align-items:center;justify-content:center;color:#fff;flex-direction:column;gap:20px}
+.submitting-overlay.show{display:flex;animation:fadeUp .3s ease}
+.spinner{width:48px;height:48px;border:3px solid rgba(200,169,110,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  header{padding:50px 24px 40px}
+  .form-card{padding:36px 24px}
+  .theme-toggle{top:16px;right:16px;width:38px;height:38px}
+  .check-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="submitting-overlay" id="overlay">
+  <div class="spinner"></div>
+  <div>Sending your brief…</div>
+</div>
+
+<header>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
+  <div class="badge">Client Intake</div>
+  <h1>Website Project Brief</h1>
+  <p>A few quick details so we can craft something tailored to your organisation.</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="steps">
+    <div class="step-pill active" id="pill-0"><span class="num">1</span> Details</div>
+    <div class="step-pill" id="pill-1"><span class="num">2</span> Design</div>
+    <div class="step-pill" id="pill-2"><span class="num">3</span> Content & Scope</div>
+  </div>
+</div>
+
+<div class="form-wrap">
+  <div class="form-card">
+    <form id="mainForm" novalidate>
+
+      <!-- STEP 1 -->
+      <div class="section active" id="sec-0">
+        <h2>Your Details</h2>
+        <p class="sub">Tell us who we're working with.</p>
+
+        <div class="field-group">
+          <label>Full Name<span class="req">*</span></label>
+          <input type="text" name="full_name" required placeholder="Jane Doe">
+          <div class="err-msg">Please enter your name.</div>
+        </div>
+        <div class="field-group">
+          <label>Organisation Name<span class="req">*</span></label>
+          <input type="text" name="organisation" required placeholder="Your company or brand">
+          <div class="err-msg">Organisation name is required.</div>
+        </div>
+        <div class="field-group">
+          <label>Email<span class="req">*</span></label>
+          <input type="email" name="email" required placeholder="you@email.com">
+          <div class="err-msg">Please enter a valid email.</div>
+        </div>
+        <div class="field-group">
+          <label>Phone / WhatsApp</label>
+          <input type="tel" name="phone" placeholder="+254 700 000 000">
+        </div>
+        <div class="field-group">
+          <label>Industry / Sector</label>
+          <input type="text" name="industry" placeholder="e.g. Hospitality, Tech, Non-profit">
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-next" onclick="next()">Next Step &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="section" id="sec-1">
+        <h2>Design Direction</h2>
+        <p class="sub">Help us understand the look and feel you're after.</p>
+
+        <div class="field-group">
+          <label>Main Purpose of the Website<span class="req">*</span></label>
+          <select name="purpose" required>
+            <option value="">— Select one —</option>
+            <option>Showcase the organisation</option>
+            <option>Generate leads / enquiries</option>
+            <option>Sell products (E-commerce)</option>
+            <option>Build credibility & online presence</option>
+            <option>Bookings / appointments</option>
+            <option>Other</option>
+          </select>
+          <div class="err-msg">Please choose a purpose.</div>
+        </div>
+
+        <div class="field-group">
+          <label>Visual Style (choose all that apply)</label>
+          <div class="check-grid">
+            <label class="check-item"><input type="checkbox" name="style" value="Minimal"><span class="dot"></span>Clean & Minimal</label>
+            <label class="check-item"><input type="checkbox" name="style" value="Modern"><span class="dot"></span>Modern & Trendy</label>
+            <label class="check-item"><input type="checkbox" name="style" value="Luxury"><span class="dot"></span>Luxurious & Elegant</label>
+            <label class="check-item"><input type="checkbox" name="style" value="Corporate"><span class="dot"></span>Corporate & Professional</label>
+            <label class="check-item"><input type="checkbox" name="style" value="Bold"><span class="dot"></span>Bold & Creative</label>
+            <label class="check-item"><input type="checkbox" name="style" value="Warm"><span class="dot"></span>Warm & Friendly</label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Reference Websites You Like</label>
+          <textarea name="references" placeholder="Paste 2–3 links to sites whose look or feel inspires you."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label>Brand Colours / Existing Brand Assets</label>
+          <textarea name="brand" placeholder="Share existing colours, fonts, or a link to your brand guide (if any)."></textarea>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-back" onclick="prev()">&larr; Back</button>
+          <button type="button" class="btn btn-next" onclick="next()">Next Step &rarr;</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="section" id="sec-2">
+        <h2>Content & Scope</h2>
+        <p class="sub">The final stretch — project shape and content.</p>
+
+        <div class="field-group">
+          <label>Pages Needed (choose all that apply)</label>
+          <div class="check-grid">
+            <label class="check-item"><input type="checkbox" name="pages" value="Home"><span class="dot"></span>Home</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="About"><span class="dot"></span>About</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Services"><span class="dot"></span>Services</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Portfolio"><span class="dot"></span>Portfolio / Gallery</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Shop"><span class="dot"></span>Shop</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Blog"><span class="dot"></span>Blog</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Contact"><span class="dot"></span>Contact</label>
+            <label class="check-item"><input type="checkbox" name="pages" value="Booking"><span class="dot"></span>Booking</label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>About Us / Organisation Intro</label>
+          <textarea name="about_us" placeholder="A brief intro to your organisation — what you do, who you serve."></textarea>
+        </div>
+
+        <div class="field-group">
+          <label>Approximate Budget</label>
+          <select name="budget">
+            <option value="">— Select range —</option>
+            <option>Under $500</option>
+            <option>$500 – $1,500</option>
+            <option>$1,500 – $3,500</option>
+            <option>$3,500 – $7,000</option>
+            <option>$7,000+</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Desired Launch Timeline</label>
+          <select name="timeline">
+            <option value="">— Select —</option>
+            <option>ASAP (under 2 weeks)</option>
+            <option>2 – 4 weeks</option>
+            <option>1 – 2 months</option>
+            <option>Flexible</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Do you have a domain & hosting?</label>
+          <select name="hosting">
+            <option value="">— Select —</option>
+            <option>Yes, both</option>
+            <option>Domain only</option>
+            <option>Hosting only</option>
+            <option>No, I'll need help with this</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>Anything else we should know?</label>
+          <textarea name="notes" placeholder="Goals, constraints, must-haves, integrations, etc."></textarea>
+        </div>
+
+        <div class="nav-buttons">
+          <button type="button" class="btn btn-back" onclick="prev()">&larr; Back</button>
+          <button type="submit" class="btn btn-submit">Submit Brief</button>
+        </div>
+      </div>
+    </form>
+
+    <div id="success-screen">
+      <div class="icon">✨</div>
+      <h2>Thank You!</h2>
+      <p>Your brief has been received. We'll review it and get back to you shortly with next steps.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const scriptURL = 'https://script.google.com/macros/s/AKfycbwhZUy2IpKngYgyvSS1DwC3yjRHLSeloyDON6HZEGtXeqjIRg5Rcg2oV0sd5b7PitA/exec';
+const form = document.getElementById('mainForm');
+const sections = document.querySelectorAll('.section');
+const pills = document.querySelectorAll('.step-pill');
+let currentStep = 0;
+
+// Theme toggle with persistence
+const themeToggle = document.getElementById('themeToggle');
+const root = document.documentElement;
+const saved = localStorage.getItem('theme');
+if(saved){ root.setAttribute('data-theme', saved); themeToggle.textContent = saved === 'dark' ? '☀️' : '🌙'; }
+themeToggle.addEventListener('click', () => {
+  const cur = root.getAttribute('data-theme');
+  const nxt = cur === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', nxt);
+  localStorage.setItem('theme', nxt);
+  themeToggle.textContent = nxt === 'dark' ? '☀️' : '🌙';
+});
+
+// Validate current step
+function validateStep(idx){
+  const sec = sections[idx];
+  const fields = sec.querySelectorAll('[required]');
+  let ok = true;
+  fields.forEach(f => {
+    const err = f.parentElement.querySelector('.err-msg');
+    const valid = f.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : f.value.trim() !== '';
+    if(!valid){
+      ok = false;
+      f.classList.add('error');
+      if(err) err.classList.add('show');
+    } else {
+      f.classList.remove('error');
+      if(err) err.classList.remove('show');
+    }
+  });
+  return ok;
+}
+
+// Clear errors on input
+form.querySelectorAll('input,select,textarea').forEach(el => {
+  el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const err = el.parentElement.querySelector('.err-msg');
+    if(err) err.classList.remove('show');
+  });
+});
+
+function next(){
+  if(!validateStep(currentStep)) return;
+  sections[currentStep].classList.remove('active');
+  pills[currentStep].classList.remove('active');
+  pills[currentStep].classList.add('done');
+  currentStep++;
+  sections[currentStep].classList.add('active');
+  pills[currentStep].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function prev(){
+  sections[currentStep].classList.remove('active');
+  pills[currentStep].classList.remove('active');
+  currentStep--;
+  pills[currentStep].classList.remove('done');
+  sections[currentStep].classList.add('active');
+  pills[currentStep].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Checkbox styling
+document.querySelectorAll('.check-item').forEach(item => {
+  const cb = item.querySelector('input');
+  item.addEventListener('click', e => {
+    if(e.target.tagName !== 'INPUT'){
+      cb.checked = !cb.checked;
+    }
+    item.classList.toggle('selected', cb.checked);
+  });
+});
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  if(!validateStep(currentStep)) return;
+  document.getElementById('overlay').classList.add('show');
+
+  const fd = new FormData(form);
+  const data = {};
+  for(const [k,v] of fd.entries()){
+    if(data[k]) data[k] = data[k] + ', ' + v;
+    else data[k] = v;
+  }
+  data.submitted_at = new Date().toLocaleString();
+
+  fetch(scriptURL, { method:'POST', mode:'no-cors', body: JSON.stringify(data) })
+    .then(() => {
+      document.getElementById('overlay').classList.remove('show');
+      form.style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('overlay').classList.remove('show');
+      alert('Submission failed. Please check your internet and try again.');
+    });
+});
+</script>
+</body>
+</html>
