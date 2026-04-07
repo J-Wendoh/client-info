@@ -93,6 +93,8 @@ textarea{resize:vertical;min-height:100px}
 .yn-toggle button:hover{border-color:var(--accent);color:var(--text)}
 .yn-toggle button.on-yes{background:var(--accent);border-color:var(--accent);color:#1a1a2e}
 .yn-toggle button.on-no{background:#d4574a;border-color:#d4574a;color:#fff}
+.radio-stack.invalid,.yn-toggle.invalid,.check-grid.invalid{outline:2px dashed #d4574a;outline-offset:6px;border-radius:11px;animation:shake .4s}
+.required-banner{background:var(--accent-light);border:1px solid var(--accent);color:var(--text);padding:12px 16px;border-radius:11px;font-size:13px;margin-bottom:24px;text-align:center;font-weight:500}
 
 /* Repeater (testimonials) */
 .repeater-item{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:16px;margin-bottom:10px;position:relative}
@@ -176,6 +178,7 @@ body.submitted .form-wrap{display:none !important}
 
 <div class="form-wrap">
   <div class="form-card">
+    <div class="required-banner">⚠️ All fields are required — please fill every section so we have everything we need.</div>
     <form id="mainForm" novalidate>
 
       <!-- STEP 1: YOUR DETAILS -->
@@ -327,12 +330,13 @@ body.submitted .form-wrap{display:none !important}
       <!-- STEP 4: MEDIA & FILE UPLOADS -->
       <div class="section" id="sec-3">
         <h2>Media & File Uploads</h2>
-        <p class="sub">Upload all your photos, brochures and files into a Google Drive folder and share the link below.</p>
+        <p class="sub">Please upload <strong>all</strong> your photos, brochures and files into a Google Drive folder, then paste the shareable link below. This is the easiest way for us to access everything in one place.</p>
 
         <div class="field-group">
-          <label class="field-label">Google Drive link with your media</label>
-          <span class="hint">Make sure the link is set to "Anyone with the link can view".</span>
-          <input type="url" name="drive_link" placeholder="https://drive.google.com/..." style="margin-top:8px">
+          <label class="field-label">📁 Google Drive Folder Link (with your photos & media)<span class="req">*</span></label>
+          <span class="hint">Create a folder in Google Drive, upload your photos, right-click → Share → "Anyone with the link can view", then paste the link here.</span>
+          <input type="url" name="drive_link" required placeholder="https://drive.google.com/drive/folders/..." style="margin-top:8px">
+          <div class="err-msg">Please share a Google Drive link with your media.</div>
         </div>
 
         <h3>What media do you have available?</h3>
@@ -640,6 +644,7 @@ document.querySelectorAll('.yn-toggle').forEach(group => {
       ynData[name] = val;
       group.querySelectorAll('button').forEach(b => b.classList.remove('on-yes','on-no'));
       btn.classList.add(val === 'Yes' ? 'on-yes' : 'on-no');
+      group.classList.remove('invalid');
     });
   });
 });
@@ -652,27 +657,58 @@ document.querySelectorAll('.radio-stack').forEach(stack => {
       card.classList.add('selected');
       const input = card.querySelector('input');
       if(input) input.checked = true;
+      stack.classList.remove('invalid');
     });
   });
 });
 
-// Validate
+// Validate — every visible field is required
+function isVisible(el){
+  return el.offsetParent !== null;
+}
 function validateStep(idx){
   const sec = sections[idx];
-  const fields = sec.querySelectorAll('[required]');
   let ok = true;
-  fields.forEach(f => {
+  let firstBad = null;
+
+  // Text-like fields
+  sec.querySelectorAll('input[type=text],input[type=email],input[type=tel],input[type=url],textarea,select').forEach(f => {
+    if(!isVisible(f)) return;
+    const val = (f.value || '').trim();
+    let valid = val !== '';
+    if(valid && f.type === 'email') valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    if(valid && f.type === 'url') valid = /^https?:\/\/.+/i.test(val);
+    f.classList.toggle('error', !valid);
     const err = f.parentElement.querySelector('.err-msg');
-    const valid = f.type === 'email' ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.value.trim()) : f.value.trim() !== '';
-    if(!valid){
-      ok = false;
-      f.classList.add('error');
-      if(err) err.classList.add('show');
-    } else {
-      f.classList.remove('error');
-      if(err) err.classList.remove('show');
-    }
+    if(err) err.classList.toggle('show', !valid);
+    if(!valid){ ok = false; if(!firstBad) firstBad = f; }
   });
+
+  // Radio groups
+  sec.querySelectorAll('.radio-stack').forEach(stack => {
+    if(!isVisible(stack)) return;
+    const checked = stack.querySelector('input[type=radio]:checked');
+    stack.classList.toggle('invalid', !checked);
+    if(!checked){ ok = false; if(!firstBad) firstBad = stack; }
+  });
+
+  // Yes/No toggles
+  sec.querySelectorAll('.yn-toggle').forEach(group => {
+    if(!isVisible(group)) return;
+    const has = !!ynData[group.dataset.name];
+    group.classList.toggle('invalid', !has);
+    if(!has){ ok = false; if(!firstBad) firstBad = group; }
+  });
+
+  // Checkbox grids — at least one
+  sec.querySelectorAll('.check-grid').forEach(grid => {
+    if(!isVisible(grid)) return;
+    const any = grid.querySelector('input[type=checkbox]:checked');
+    grid.classList.toggle('invalid', !any);
+    if(!any){ ok = false; if(!firstBad) firstBad = grid; }
+  });
+
+  if(!ok && firstBad) firstBad.scrollIntoView({behavior:'smooth', block:'center'});
   return ok;
 }
 
@@ -681,6 +717,10 @@ form.querySelectorAll('input,select,textarea').forEach(el => {
     el.classList.remove('error');
     const err = el.parentElement.querySelector('.err-msg');
     if(err) err.classList.remove('show');
+  });
+  el.addEventListener('change', () => {
+    const grid = el.closest('.check-grid');
+    if(grid) grid.classList.remove('invalid');
   });
 });
 
